@@ -12,6 +12,8 @@ import { AddPage } from '../pages/add/add';
 import { RemovePage } from '../pages/remove/remove';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { ChatPage } from '../pages/chat/chat';
+import { IonicStorageModule } from '@ionic/storage';
+import { ForgotPage } from '../pages/forgot/forgot';
 
 @NgModule({
   declarations: [
@@ -22,11 +24,22 @@ import { ChatPage } from '../pages/chat/chat';
     AddPage,
     RemovePage,
     NotificationsPage,
-    ChatPage
+    ChatPage,
+    ForgotPage,
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot({
+      name: 'database',
+      driverOrder: ['indexeddb', 'sqlite', 'websql'],
+      storeName: 'database'
+    }),
+    IonicStorageModule.forRoot({
+      name: 'friends',
+      driverOrder: ['indexeddb', 'sqlite', 'websql'],
+      storeName: 'friends'
+    }),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -37,7 +50,8 @@ import { ChatPage } from '../pages/chat/chat';
     AddPage,
     RemovePage,
     NotificationsPage,
-    ChatPage
+    ChatPage,
+    ForgotPage,
   ],
   providers: [
     StatusBar,

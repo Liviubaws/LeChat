@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ActionSheetController } from 'ionic-angular';
-import { usernames, passwords } from '../register/register';
 import { HomePage, currentUser } from '../home/home';
 import { AddPage } from '../add/add';
 import { RemovePage } from '../remove/remove';
 import { NotificationsPage} from '../notifications/notifications';
 import { ChatPage } from '../chat/chat';
+import { Storage } from '@ionic/storage';
 
 
 /**
@@ -25,7 +25,7 @@ import { ChatPage } from '../chat/chat';
 
 export class GeneralPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              public actionSheetCtrl: ActionSheetController) {
+              public actionSheetCtrl: ActionSheetController, public database:Storage) {
   }
 
   ionViewDidLoad() {
@@ -68,12 +68,8 @@ export class GeneralPage {
           text: 'Delete account',
           icon: 'close-circle',
           handler: () => {
-            const index = usernames.indexOf(currentUser, 0);
-            if (index > -1) {
-              usernames.splice(index, 1);
-              passwords.splice(index, 1);
-            }
             alert("Are you sure?");
+            this.database.remove(currentUser);
             console.log('Delete account clicked');
             this.navCtrl.push(HomePage);
           }
@@ -93,5 +89,8 @@ export class GeneralPage {
   }
   notifications() {
     this.navCtrl.push(NotificationsPage);
+  }
+  logout(){
+    this.navCtrl.push(HomePage);
   }
 }
