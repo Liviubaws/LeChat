@@ -2,6 +2,10 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ActionSheetController } from 'ionic-angular';
 import { usernames, passwords } from '../register/register';
 import { HomePage, currentUser } from '../home/home';
+import { AddPage } from '../add/add';
+import { RemovePage } from '../remove/remove';
+import { NotificationsPage} from '../notifications/notifications';
+import { ChatPage } from '../chat/chat';
 
 
 /**
@@ -35,13 +39,14 @@ export class GeneralPage {
           text: 'Add friend',
           icon: 'person-add',
           handler: () => {
-
+            this.navCtrl.push(AddPage);
             console.log('Add clicked');
           }
         },{
           text: 'Remove friend',
           icon: 'backspace',
           handler: () => {
+            this.navCtrl.push(RemovePage);
             console.log('Remove clicked');
           }
         },{
@@ -68,6 +73,7 @@ export class GeneralPage {
               usernames.splice(index, 1);
               passwords.splice(index, 1);
             }
+            alert("Are you sure?");
             console.log('Delete account clicked');
             this.navCtrl.push(HomePage);
           }
@@ -81,5 +87,11 @@ export class GeneralPage {
       ]
     });
     actionSheet.present();
+  }
+  chat() {
+    this.navCtrl.push(ChatPage);
+  }
+  notifications() {
+    this.navCtrl.push(NotificationsPage);
   }
 }

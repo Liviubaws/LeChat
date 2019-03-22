@@ -8,13 +8,21 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { RegisterPage } from '../pages/register/register';
 import { GeneralPage } from '../pages/general/general';
+import { AddPage } from '../pages/add/add';
+import { RemovePage } from '../pages/remove/remove';
+import { NotificationsPage } from '../pages/notifications/notifications';
+import { ChatPage } from '../pages/chat/chat';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
     RegisterPage,
-    GeneralPage
+    GeneralPage,
+    AddPage,
+    RemovePage,
+    NotificationsPage,
+    ChatPage
   ],
   imports: [
     BrowserModule,
@@ -25,7 +33,11 @@ import { GeneralPage } from '../pages/general/general';
     MyApp,
     HomePage,
     RegisterPage,
-    GeneralPage
+    GeneralPage,
+    AddPage,
+    RemovePage,
+    NotificationsPage,
+    ChatPage
   ],
   providers: [
     StatusBar,
