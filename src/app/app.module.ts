@@ -14,6 +14,10 @@ import { NotificationsPage } from '../pages/notifications/notifications';
 import { ChatPage } from '../pages/chat/chat';
 import { IonicStorageModule } from '@ionic/storage';
 import { ForgotPage } from '../pages/forgot/forgot';
+import { FIREBASE_CONFIG } from './environment';
+import {AngularFireModule} from 'angularfire2';
+import {AngularFireAuthModule} from 'angularfire2/auth';
+import {AngularFireDatabaseModule} from 'angularfire2/database';
 
 @NgModule({
   declarations: [
@@ -30,16 +34,10 @@ import { ForgotPage } from '../pages/forgot/forgot';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    IonicStorageModule.forRoot({
-      name: 'database',
-      driverOrder: ['indexeddb', 'sqlite', 'websql'],
-      storeName: 'database'
-    }),
-    IonicStorageModule.forRoot({
-      name: 'friends',
-      driverOrder: ['indexeddb', 'sqlite', 'websql'],
-      storeName: 'friends'
-    }),
+    IonicStorageModule.forRoot(),
+    AngularFireModule.initializeApp(FIREBASE_CONFIG),
+    AngularFireAuthModule,
+    AngularFireDatabaseModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

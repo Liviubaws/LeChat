@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
 import { RegisterPage} from '../register/register';
 import { GeneralPage } from '../general/general';
 import { ForgotPage} from '../forgot/forgot';
-import { Storage} from '@ionic/storage';
-
-
-export var currentUser:string;
+import { AngularFireAuth} from 'angularfire2/auth';
 
 
 @Component({
@@ -20,34 +17,32 @@ export class HomePage {
   username:string;
   password:string;
 
-  constructor(public navCtrl: NavController, public database:Storage){
+  constructor(public navCtrl: NavController, private fire: AngularFireAuth, private alertCtrl: AlertController){
+  }
+
+  alert(message: string){
+    this.alertCtrl.create({
+      title: 'Info',
+      subTitle: message,
+      buttons: ['OK']
+    }).present();
   }
 
   login(){
-    /*var i = 0;
-    var logged = 0;
-    for(i = 0; i < usernames.length; i++){
-      if(this.username == usernames[i] && this.password == passwords[i]){
-        console.log("User "+this.username+" has logged in succesfully with the password "+this.password);
-        currentUser = this.username;
-        alert("Login succesfully");
-        logged = 1;
+    this.fire.auth.signInWithEmailAndPassword(this.username, this.password).then(data =>{
+      if(this.fire.auth.currentUser.emailVerified == true){
+        this.alert('You have successfully logged in!')
         this.navCtrl.push(GeneralPage);
-      }
-    }*/
-
-    this.database.get(this.username).then((result) => {
-      if((result == null) || (result != this.password)){
-        alert("Username or password is wrong");
+        console.log("Signed in with "+this.username+" and pass "+this.password);
+        
       }
       else{
-        if(result == this.password){
-          alert("Logged in");
-          console.log("User "+this.username+" has logged in succesfully with the password "+this.password);
-          currentUser = this.username;
-          this.navCtrl.push(GeneralPage);
-        }
+        this.alert("Please verify your email");
       }
+    })
+    .catch(error => {
+      console.log("Some error");
+      this.alert(error.message);
     });
   }
   goRegister(){

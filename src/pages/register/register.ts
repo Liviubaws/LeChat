@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { HomePage } from '../home/home';
-import { Storage } from '@ionic/storage';
-
+import {AngularFireAuth} from 'angularfire2/auth'
 /**
  * Generated class for the RegisterPage page.
  *
@@ -24,8 +23,18 @@ export class RegisterPage {
   username:string;
   password:string;
   repass:string;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public database: Storage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,private fire: AngularFireAuth, private alertCtrl: AlertController) {
   }
+
+
+  alert(message: string){
+    this.alertCtrl.create({
+      title: 'Info',
+      subTitle: message,
+      buttons: ['OK']
+    }).present();
+  }
+
 
   ionViewDidLoad() {
     console.log('goto RegisterPage');
@@ -34,35 +43,32 @@ export class RegisterPage {
     var errors = 0;
     if(this.username.length < 7){
       errors++;
-      alert("Username too short");
+      this.alert("Username too short");
     }
     if(this.password.length < 7){
       errors++;
-      alert("Password too short");
+      this.alert("Password too short");
     }
     if(this.username.length == 0 || this.password.length == 0 || this.repass.length == 0){
       errors++;
-      alert("Please fill all fields");
+      this.alert("Please fill all fields");
     }
     if(this.password != this.repass){
       errors++;
-      alert("Passwords are different");
+      this.alert("Passwords are different");
     }
-    this.database.get(this.username).then((result) => {
-      if(result != null){
-        errors++;
-        alert("Username is already taken");
-      }
-      else{
-        if(errors == 0){
-          this.database.set(this.username, this.password);
-          console.log("User "+this.username+" registered with password "+this.password);
-          alert("Registered succesfully, please log in");
-          this.navCtrl.push(HomePage);
-        }
-      }
-    });
-    
+    if(errors == 0){
+      this.fire.auth.createUserWithEmailAndPassword(this.username, this.password).then((data) => {
+        console.log("User "+this.username+" registered with password "+this.password);
+        this.alert("You have registered successfully!");
+        this.fire.auth.currentUser.sendEmailVerification();
+        this.navCtrl.push(HomePage);
+      })
+      .catch(error => {
+        console.log("Some error");
+        this.alert(error.message);
+        this.navCtrl.push(HomePage);
+      });
+    }
   }
-  
 }

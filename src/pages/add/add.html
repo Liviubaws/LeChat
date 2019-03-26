@@ -12,10 +12,18 @@
 
 <ion-content padding>
   <ion-title>Add Friends</ion-title>
+
+ 
   <ion-list>
     <ion-item>
-      <ion-input placeholder="Friend's username" [(ngModel)]="friend"></ion-input>
+      <ion-input placeholder="Friend's email" [(ngModel)]="friend"></ion-input>
     </ion-item>
     </ion-list>
+    <!--
+      <ion-list>
+        <ion-item *ngFor="let item from friends; let i=index">
+          {{item.$value}} </ion-item>
+      </ion-list> 
+    -->
     <button ion-button (click)="add()">Add friend</button>
 </ion-content>

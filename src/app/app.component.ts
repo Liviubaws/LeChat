@@ -3,6 +3,8 @@ import { Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { HomePage } from '../pages/home/home';
+import firebase from 'firebase';
+import { FIREBASE_CONFIG } from './environment';
 
 
 
@@ -20,6 +22,7 @@ export class MyApp {
       statusBar.styleDefault();
       splashScreen.hide();
     });
+    firebase.initializeApp(FIREBASE_CONFIG);
   }
 }
 

@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ActionSheetController } from 'ionic-angular';
-import { HomePage, currentUser } from '../home/home';
+import { IonicPage, NavController, NavParams, ActionSheetController, AlertController } from 'ionic-angular';
+import { HomePage} from '../home/home';
 import { AddPage } from '../add/add';
 import { RemovePage } from '../remove/remove';
 import { NotificationsPage} from '../notifications/notifications';
 import { ChatPage } from '../chat/chat';
-import { Storage } from '@ionic/storage';
+import { AngularFireAuth} from 'angularfire2/auth';
 
 
 /**
@@ -25,9 +25,15 @@ import { Storage } from '@ionic/storage';
 
 export class GeneralPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              public actionSheetCtrl: ActionSheetController, public database:Storage) {
+              public actionSheetCtrl: ActionSheetController, private alertCtrl: AlertController, private fire: AngularFireAuth) {
   }
-
+  alert(message: string){
+    this.alertCtrl.create({
+      title: 'Info',
+      subTitle: message,
+      buttons: ['OK']
+    }).present();
+  }
   ionViewDidLoad() {
     console.log('ionViewDidLoad GeneralPage');
   }
@@ -68,9 +74,9 @@ export class GeneralPage {
           text: 'Delete account',
           icon: 'close-circle',
           handler: () => {
-            alert("Are you sure?");
-            this.database.remove(currentUser);
-            console.log('Delete account clicked');
+            this.alert(this.fire.auth.currentUser.email+ " has been deleted");
+            console.log('Deleted account '+this.fire.auth.currentUser.email);
+            this.fire.auth.currentUser.delete();
             this.navCtrl.push(HomePage);
           }
         },{
@@ -91,6 +97,8 @@ export class GeneralPage {
     this.navCtrl.push(NotificationsPage);
   }
   logout(){
+    this.alert("You logged you");
+    this.fire.auth.signOut();
     this.navCtrl.push(HomePage);
   }
 }
