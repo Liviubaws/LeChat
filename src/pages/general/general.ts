@@ -3,8 +3,7 @@ import { IonicPage, NavController, NavParams, ActionSheetController, AlertContro
 import { HomePage} from '../home/home';
 import { AddPage } from '../add/add';
 import { RemovePage } from '../remove/remove';
-import { NotificationsPage} from '../notifications/notifications';
-import { ChatPage } from '../chat/chat';
+import ChatPage from '../chat/chat';
 import { AngularFireAuth} from 'angularfire2/auth';
 
 
@@ -92,9 +91,6 @@ export class GeneralPage {
   }
   chat() {
     this.navCtrl.push(ChatPage);
-  }
-  notifications() {
-    this.navCtrl.push(NotificationsPage);
   }
   logout(){
     this.alert("You logged you");

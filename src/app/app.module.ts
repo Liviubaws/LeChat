@@ -10,8 +10,7 @@ import { RegisterPage } from '../pages/register/register';
 import { GeneralPage } from '../pages/general/general';
 import { AddPage } from '../pages/add/add';
 import { RemovePage } from '../pages/remove/remove';
-import { NotificationsPage } from '../pages/notifications/notifications';
-import { ChatPage } from '../pages/chat/chat';
+import ChatPage from '../pages/chat/chat';
 import { IonicStorageModule } from '@ionic/storage';
 import { ForgotPage } from '../pages/forgot/forgot';
 import { FIREBASE_CONFIG } from './environment';
@@ -27,7 +26,6 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
     GeneralPage,
     AddPage,
     RemovePage,
-    NotificationsPage,
     ChatPage,
     ForgotPage,
   ],
@@ -47,7 +45,6 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
     GeneralPage,
     AddPage,
     RemovePage,
-    NotificationsPage,
     ChatPage,
     ForgotPage,
   ],
