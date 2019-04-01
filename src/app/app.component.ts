@@ -12,7 +12,7 @@ import { FIREBASE_CONFIG } from './environment';
 @Component({
   templateUrl: 'app.html'
 })
-export class MyApp {
+export class LeChat {
   rootPage:any = HomePage;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {

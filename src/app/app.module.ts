@@ -4,7 +4,7 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 
-import { MyApp } from './app.component';
+import { LeChat } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { RegisterPage } from '../pages/register/register';
 import { GeneralPage } from '../pages/general/general';
@@ -20,7 +20,7 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
 
 @NgModule({
   declarations: [
-    MyApp,
+    LeChat,
     HomePage,
     RegisterPage,
     GeneralPage,
@@ -31,7 +31,7 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(LeChat),
     IonicStorageModule.forRoot(),
     AngularFireModule.initializeApp(FIREBASE_CONFIG),
     AngularFireAuthModule,
@@ -39,7 +39,7 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    MyApp,
+    LeChat,
     HomePage,
     RegisterPage,
     GeneralPage,
