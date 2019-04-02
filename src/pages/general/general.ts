@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ActionSheetController, AlertController } from 'ionic-angular';
+import { NavController, NavParams, ActionSheetController, AlertController } from 'ionic-angular';
 import { HomePage} from '../home/home';
 import { AddPage } from '../add/add';
+import { NotificationsPage } from '../notifications/notifications';
 import { RemovePage } from '../remove/remove';
-import ChatPage from '../chat/chat';
+import { ChatPage} from '../chat/chat';
 import { AngularFireAuth} from 'angularfire2/auth';
 
 
@@ -14,8 +15,6 @@ import { AngularFireAuth} from 'angularfire2/auth';
  * Ionic pages and navigation.
  */
 
-
-@IonicPage()
 @Component({
   selector: 'page-general',
   templateUrl: 'general.html',
@@ -91,6 +90,9 @@ export class GeneralPage {
   }
   chat() {
     this.navCtrl.push(ChatPage);
+  }
+  notifications(){
+    this.navCtrl.push(NotificationsPage);
   }
   logout(){
     this.alert("You logged you");

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { NavController, NavParams, AlertController } from 'ionic-angular';
 import { GeneralPage } from '../general/general';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
@@ -10,7 +10,6 @@ import { AngularFireDatabase } from 'angularfire2/database';
  * Ionic pages and navigation.
  */
 
-@IonicPage()
 @Component({
   selector: 'page-remove',
   templateUrl: 'remove.html',
@@ -19,9 +18,14 @@ export class RemovePage {
   friend:string;
   data:string;
   friends = [];
+  notifications = [];
+  notification:string;
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private fire: AngularFireAuth, public fdb: AngularFireDatabase) {
     this.fdb.list("/friends/").valueChanges().subscribe(__friends => {
       this.friends = __friends;
+    });
+    this.fdb.list("/notifications/").valueChanges().subscribe(__notifications => {
+      this.notifications = __notifications;
     });
   }
   alert(message: string){
@@ -44,6 +48,12 @@ export class RemovePage {
     }
     else{
       this.fdb.list(`/friends/`).remove(this.friends[this.friends.indexOf(this.data)].$key);
+      this.friends.splice(this.friends.indexOf(this.data), 1);
+      this.notification = "";
+      this.notification = this.notification.concat(this.fire.auth.currentUser.email);
+      this.notification = this.notification.concat(" has removed ");
+      this.notification = this.notification.concat(this.friend);
+      this.fdb.list("/notifications").push(this.notification);
       this.alert(this.friend + " is no longer your friend");
       this.navCtrl.push(GeneralPage);
     }

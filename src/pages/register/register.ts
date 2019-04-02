@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { NavController, NavParams, AlertController } from 'ionic-angular';
 import { HomePage } from '../home/home';
 import {AngularFireAuth} from 'angularfire2/auth'
 /**
@@ -9,8 +9,6 @@ import {AngularFireAuth} from 'angularfire2/auth'
  * Ionic pages and navigation.
  */
 
-
-@IonicPage()
 @Component({
   selector: 'page-register',
   templateUrl: 'register.html',
@@ -18,8 +16,6 @@ import {AngularFireAuth} from 'angularfire2/auth'
 
 
 export class RegisterPage {
-  
-  
   username:string;
   password:string;
   repass:string;

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { NavController, NavParams, AlertController } from 'ionic-angular';
 import { GeneralPage } from '../general/general';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
@@ -12,8 +12,6 @@ import { AngularFireAuth } from 'angularfire2/auth';
  * Ionic pages and navigation.
  */
 
-
-@IonicPage()
 @Component({
   selector: 'page-add',
   templateUrl: 'add.html',
@@ -22,10 +20,15 @@ export class AddPage {
   friend:string;
   data:string;
   friends = [];
+  notifications = [];
+  notification:string;
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public fdb: AngularFireDatabase,
     public fire:AngularFireAuth) {
     this.fdb.list("/friends/").valueChanges().subscribe(__friends => {
       this.friends = __friends;
+    });
+    this.fdb.list("/notifications/").valueChanges().subscribe(__notifications => {
+      this.notifications = __notifications;
     });
   }
 
@@ -65,7 +68,12 @@ export class AddPage {
           }
           else{
             this.alert("You added "+this.friend);
+            this.notification = "";
+            this.notification = this.notification.concat(this.fire.auth.currentUser.email);
+            this.notification = this.notification.concat(" has added ");
+            this.notification = this.notification.concat(this.friend);
             this.fdb.list("/friends/").push(this.data);
+            this.fdb.list("/notifications").push(this.notification);
             this.navCtrl.push(GeneralPage);
           } 
         }

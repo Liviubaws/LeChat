@@ -1,0 +1,20 @@
+<!--
+  Generated template for the NotificationsPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar (click)="stop()">
+    <ion-title>Notifications</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-title>Notifications</ion-title>
+  <ion-list>
+  <ion-item *ngFor="let show of toshow">
+    {{show}}
+  </ion-item>
+</ion-list>
+</ion-content>
