@@ -38,19 +38,19 @@ export class ChatPage {
   friendCheck:string;
   toShow:string;
   showSent:string;
-  toRemove:string;
   notifications = [];
   notification:string;
+  index;
   sub;
   constructor(public navCtrl: NavController, public navParams: NavParams, public fdb:AngularFireDatabase, public fire:AngularFireAuth,
     public alertCtrl:AlertController) {
-    this.fdb.list("/chat/").valueChanges().subscribe(__chat => {
+    this.fdb.list("/chat/").subscribe(__chat => {
       this.chats = __chat;
     });
-    this.fdb.list("/friends/").valueChanges().subscribe(__friends => {
+    this.fdb.list("/friends/").subscribe(__friends => {
       this.friends = __friends;
     });
-    this.fdb.list("/notifications/").valueChanges().subscribe(__notifications => {
+    this.fdb.list("/notifications/").subscribe(__notifications => {
       this.notifications = __notifications;
     });
   }
@@ -85,6 +85,7 @@ export class ChatPage {
       }
       else{
         if(errors == 0){
+          this.index = -1;
           this.data = "";
           this.mhelper = "";
           this.showSent = "";
@@ -94,7 +95,12 @@ export class ChatPage {
           this.data = this.data.concat(this.fire.auth.currentUser.email);
           this.data = this.data.concat(this.friend);
           this.mhelper = this.mhelper.concat(this.data);
-          if(this.friends.indexOf(this.data) >= 0){
+          for(var i = 0; i < this.friends.length; i++){
+            if(this.friends[i].$value == this.data){
+              this.index = i;
+            }
+          }
+          if(this.index > 0){
             this.mhelper = this.message.concat(this.mhelper);
             this.showSent = this.showSent.concat(this.message);
             this.notification = "";
@@ -128,12 +134,12 @@ export class ChatPage {
    else{
       for(var i = 0; i < this.friends.length; i++){
         for(var j = 0; j < this.chats.length; j++){
-          this.checker = this.friends[i];
-          this.recvm = this.chats[j];
+          this.checker = this.friends[i].$value;
+          this.recvm = this.chats[j].$value;
           this.recvmCopy = this.recvm;
           this.recvmCpy = this.recvm;
           this.helper = this.fire.auth.currentUser.email;
-          this.friendCheck = this.friends[i].substr(this.helper.length);
+          this.friendCheck = this.friends[i].$value.substr(this.helper.length);
           if(this.helper== this.checker.substring(0, this.helper.length) && this.recvm.substring(this.recvm.length - this.helper.length, this.recvm.length) == this.helper &&
           this.recvmCpy.substring(this.recvm.length - this.helper.length - this.friendCheck.length, this.recvm.length - this.helper.length) == this.friendCheck){
             this.recvmCopy = this.recvmCopy.substring(0, this.recvmCopy.length - this.friendCheck.length - this.helper.length);
@@ -143,12 +149,10 @@ export class ChatPage {
             this.toShow = this.toShow.concat(": ")
             this.toShow = this.toShow.concat(this.recvmCopy);
             this.mymsj.push(this.toShow);
-            this.toRemove = this.chats[j];
-            this.fdb.list("/chat").remove(this.chats[this.chats.indexOf(this.toRemove)].$key);
-            this.chats.splice(j, 1);
+            this.fdb.list("/chat").remove(this.chats[j].$value.$key);
           }
         }
-      } 
+      }
     }
   }
 }

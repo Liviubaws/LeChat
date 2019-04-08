@@ -12,10 +12,16 @@
 
 <ion-content padding>
   <ion-title>Remove Friends</ion-title>
-  <ion-list>
-    <ion-item>
+  <!--<ion-list>
+   <ion-item>
       <ion-input placeholder="Friend's username" [(ngModel)]="friend"></ion-input>
     </ion-item>
     </ion-list>
+     -->
+   <!-- <ion-list placeholder="Choose friend">
+      <ion-item *ngFor="let nume of friends"> {{nume.$value}} </ion-item>
+    </ion-list>
+  -->
+  
     <button ion-button (click)="remove()">Remove friend</button>
 </ion-content>

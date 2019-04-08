@@ -17,14 +17,15 @@ import { AngularFireDatabase } from 'angularfire2/database';
 export class RemovePage {
   friend:string;
   data:string;
+  index;
   friends = [];
   notifications = [];
   notification:string;
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private fire: AngularFireAuth, public fdb: AngularFireDatabase) {
-    this.fdb.list("/friends/").valueChanges().subscribe(__friends => {
+    this.fdb.list("/friends/").subscribe(__friends => {
       this.friends = __friends;
     });
-    this.fdb.list("/notifications/").valueChanges().subscribe(__notifications => {
+    this.fdb.list("/notifications/").subscribe(__notifications => {
       this.notifications = __notifications;
     });
   }
@@ -39,16 +40,23 @@ export class RemovePage {
     console.log('ionViewDidLoad RemovePage');
   }
   remove(){
+    this.index = -1;
     this.data = "";
     this.data = this.data.concat(this.fire.auth.currentUser.email);
     this.data = this.data.concat(this.friend);
-    if(this.friends.indexOf(this.data) < 0){
+    console.log(this.friends);
+    console.log(this.data);
+    for(var i = 0; i < this.friends.length; i++){
+      if(this.friends[i].$value == this.data){
+        this.index = i;
+      }
+    }
+    if(this.index == -1){
       this.alert("That user is not your friend");
       this.navCtrl.push(GeneralPage);
     }
     else{
-      this.fdb.list(`/friends/`).remove(this.friends[this.friends.indexOf(this.data)].$key);
-      this.friends.splice(this.friends.indexOf(this.data), 1);
+      this.fdb.list("/friends/").remove(this.friends[this.index].$key);
       this.notification = "";
       this.notification = this.notification.concat(this.fire.auth.currentUser.email);
       this.notification = this.notification.concat(" has removed ");
@@ -59,3 +67,6 @@ export class RemovePage {
     }
   }
 }
+
+//Se sterg toate notificarile cand vad de la un user
+//Se sterg toate prieteniile cand sterg de la un user

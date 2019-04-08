@@ -22,12 +22,13 @@ export class AddPage {
   friends = [];
   notifications = [];
   notification:string;
+  index;
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, public fdb: AngularFireDatabase,
     public fire:AngularFireAuth) {
-    this.fdb.list("/friends/").valueChanges().subscribe(__friends => {
+    this.fdb.list("/friends/").subscribe(__friends => {
       this.friends = __friends;
     });
-    this.fdb.list("/notifications/").valueChanges().subscribe(__notifications => {
+    this.fdb.list("/notifications/").subscribe(__notifications => {
       this.notifications = __notifications;
     });
   }
@@ -59,10 +60,16 @@ export class AddPage {
       }
       else{
         if(errors == 0){
+          this.index = -1;
           this.data = "";
           this.data = this.data.concat(this.fire.auth.currentUser.email);
           this.data = this.data.concat(this.friend);
-          if(this.friends.indexOf(this.data) >= 0){
+          for(var i = 0; i < this.friends.length; i++){
+            if(this.friends[i].$value == this.data){
+              this.index = i;
+            }
+          }
+          if(this.index > 0){
             this.alert("You are already friends with that user");
             this.navCtrl.push(GeneralPage);
           }
