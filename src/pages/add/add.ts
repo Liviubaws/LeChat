@@ -52,12 +52,12 @@ export class AddPage {
       this.alert("You cannot add yourself");
       this.navCtrl.push(GeneralPage);
     }
-    this.fire.auth.fetchSignInMethodsForEmail(this.friend).then(result => {
+    /*this.fire.auth.fetchSignInMethodsForEmail(this.friend).then(result => {
       if(result.length == 0){
         errors = 1;
         this.alert("That username doesn't exist");
         this.navCtrl.push(GeneralPage);
-      }
+      }*/
       else{
         if(errors == 0){
           this.index = -1;
@@ -85,7 +85,7 @@ export class AddPage {
           } 
         }
       }
-    });
+    //});
   }
 
 }
