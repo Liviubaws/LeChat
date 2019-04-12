@@ -20,6 +20,7 @@ export class RemovePage {
   index;
   friends = [];
   notifications = [];
+  myfriends = [];
   notification:string;
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private fire: AngularFireAuth, public fdb: AngularFireDatabase) {
     this.fdb.list("/friends/").subscribe(__friends => {
@@ -28,6 +29,7 @@ export class RemovePage {
     this.fdb.list("/notifications/").subscribe(__notifications => {
       this.notifications = __notifications;
     });
+   
   }
   alert(message: string){
     this.alertCtrl.create({
@@ -38,6 +40,10 @@ export class RemovePage {
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad RemovePage');
+    this.myfriends = this.friends;
+    for(var i = 0; i < this.friends.length; i++){
+      this.myfriends.push(this.friends[i].$value);
+    }
   }
   remove(){
     this.index = -1;
@@ -68,5 +74,4 @@ export class RemovePage {
   }
 }
 
-//Se sterg toate notificarile cand vad de la un user
-//Se sterg toate prieteniile cand sterg de la un user
+//Lista prieteni pt remove

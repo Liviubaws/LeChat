@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController, AlertController, Platform } from 'ionic-angular';
 import { RegisterPage} from '../register/register';
 import { GeneralPage } from '../general/general';
 import { ForgotPage} from '../forgot/forgot';
@@ -16,10 +16,23 @@ import { AngularFireAuth} from 'angularfire2/auth';
 export class HomePage {
   username:string;
   password:string;
-
-  constructor(public navCtrl: NavController, private fire: AngularFireAuth, private alertCtrl: AlertController){
+  public unregisterBackButtonAction: any;
+  constructor(public navCtrl: NavController, private fire: AngularFireAuth, private alertCtrl: AlertController, public platform: Platform){
+  }
+  ionViewDidLoad() {
+    this.initializeBackButtonCustomHandler();
   }
 
+  ionViewWillLeave() {
+      // Unregister the custom back button action for this page
+      this.unregisterBackButtonAction && this.unregisterBackButtonAction();
+  }
+
+  initializeBackButtonCustomHandler(): void {
+      this.unregisterBackButtonAction = this.platform.registerBackButtonAction(function(event){
+          console.log('Prevent Back Button Page Change');
+      }, 101); // Priority 101 will override back button handling (we set in app.component.ts) as it is bigger then priority 100 configured in app.component.ts file */
+  }       
   alert(message: string){
     this.alertCtrl.create({
       title: 'Info',

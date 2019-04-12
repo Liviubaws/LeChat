@@ -1,5 +1,5 @@
 <!--
-  Generated template for the ForgotPage page.
+  Generated template for the ChangePassPage page.
 
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
@@ -10,11 +10,11 @@
     </ion-navbar>
   </ion-header>
 <ion-content padding center text-center>
-  <ion-title>Forgot Password</ion-title>
+  <ion-title>Change Password</ion-title>
   <ion-list>
     <ion-item>
-      <ion-input placeholder="Enter your username" [(ngModel)]="username"></ion-input>
+      <ion-input placeholder="Enter new password" [(ngModel)]="newpass" type="password"></ion-input>
     </ion-item>
   </ion-list>
-  <button ion-button (click)="getPassword()">Get password</button>
+  <button ion-button (click)="changePass()">Change password</button>
 </ion-content>

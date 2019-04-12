@@ -13,8 +13,10 @@
 <ion-content padding>
     <ion-title>Notifications</ion-title>
   <ion-list>
-  <ion-item *ngFor="let show of toshow">
+  <ion-item class="item item-text-wrap" *ngFor="let show of toshow">
+      <ion-label text-wrap>
     {{show}}
+    </ion-label>
   </ion-item>
 </ion-list>
 </ion-content>

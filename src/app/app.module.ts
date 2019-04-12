@@ -14,6 +14,7 @@ import { ChatPage} from '../pages/chat/chat';
 import { IonicStorageModule } from '@ionic/storage';
 import { ForgotPage } from '../pages/forgot/forgot';
 import { NotificationsPage} from '../pages/notifications/notifications';
+import { ChangePassPage} from '../pages/change-pass/change-pass';
 import { FIREBASE_CONFIG } from './environment';
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireAuthModule} from 'angularfire2/auth';
@@ -29,6 +30,7 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
     RemovePage,
     ChatPage,
     NotificationsPage,
+    ChangePassPage,
     ForgotPage
   ],
   imports: [
@@ -49,6 +51,7 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
     RemovePage,
     ChatPage,
     NotificationsPage,
+    ChangePassPage,
     ForgotPage
   ],
   providers: [
