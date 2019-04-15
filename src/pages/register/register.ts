@@ -20,6 +20,7 @@ export class RegisterPage {
   password:string;
   repass:string;
   constructor(public navCtrl: NavController, public navParams: NavParams,private fire: AngularFireAuth, private alertCtrl: AlertController) {
+    
   }
 
 

@@ -25,9 +25,12 @@
     </ion-item>
   </ion-list> 
   <ion-list>
-    <ion-item>
-      <ion-input placeholder="Friend's email" [(ngModel)]="friend"></ion-input>
+      <ion-item *ngFor = "let f of fr; let i = index" (click)="choose(i)">
+          {{f}}
     </ion-item>
+    <ion-item>
+        <ion-input placeholder="Friend's email" [(ngModel)]="friend"></ion-input>
+      </ion-item>
     <ion-item>
       <ion-input placeholder="Message" [(ngModel)]="message"></ion-input>
     </ion-item>

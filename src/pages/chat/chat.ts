@@ -40,8 +40,11 @@ export class ChatPage {
   showSent:string;
   notifications = [];
   notification:string;
+  checked = [];
+  fr = [];
   index;
   sub;
+  subfriends;
   constructor(public navCtrl: NavController, public navParams: NavParams, public fdb:AngularFireDatabase, public fire:AngularFireAuth,
     public alertCtrl:AlertController) {
     this.fdb.list("/chat/").subscribe(__chat => {
@@ -53,6 +56,9 @@ export class ChatPage {
     this.fdb.list("/notifications/").subscribe(__notifications => {
       this.notifications = __notifications;
     });
+    for(var i = 0; i < 1000; i++){
+      this.checked[i] = 0;
+    }
   }
 
   alert(message: string){
@@ -67,8 +73,27 @@ export class ChatPage {
     console.log('ionViewDidLoad ChatPage');
     this.sub = Observable.interval(1000)
     .subscribe((val) => { this.chatShow(); });
+    this.subfriends = Observable.interval(1000)
+    .subscribe((val) => { this.friendsShow(); });
   }
 
+  friendsShow(){
+    if(this.fire.auth.currentUser == null){
+      this.sub.unsubscribe();
+    }
+    else{
+      for(var i = 0; i < this.friends.length; i++){
+        if(this.friends[i].$value.substring(0, this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email && this.checked[i] == 0){
+          this.toShow = this.friends[i].$value.substring(this.fire.auth.currentUser.email.length, this.friends[i].$value.length);
+          this.fr.push(this.toShow);
+          this.checked[i] = 1;
+        }
+      }
+    }
+  }
+  choose(i){
+    this.friend = this.fr[i];
+  }
   chatSend(){
     var errors = 0;
     if(this.friend == this.fire.auth.currentUser.email){
@@ -100,7 +125,7 @@ export class ChatPage {
               this.index = i;
             }
           }
-          if(this.index > 0){
+          if(this.index > -1){
             this.mhelper = this.message.concat(this.mhelper);
             this.showSent = this.showSent.concat(this.message);
             this.notification = "";
@@ -118,11 +143,11 @@ export class ChatPage {
           } 
         }
       }
-    //});
   }
 
   stop(){
     this.sub.unsubscribe();
+    this.subfriends.unsubscribe();
     for(var i=0;i<this.mymsj.length;i++){
       this.mymsj.pop();
     }

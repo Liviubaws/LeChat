@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController } from 'ionic-angular';
-import { GeneralPage } from '../general/general';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
+import 'rxjs/add/observable/interval';
+import { Observable } from 'rxjs';
+import { GeneralPage } from '../general/general';
 /**
  * Generated class for the RemovePage page.
  *
@@ -21,7 +23,11 @@ export class RemovePage {
   friends = [];
   notifications = [];
   myfriends = [];
+  checked = [];
+  toShow:string;
+  fr = [];
   notification:string;
+  sub;
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private fire: AngularFireAuth, public fdb: AngularFireDatabase) {
     this.fdb.list("/friends/").subscribe(__friends => {
       this.friends = __friends;
@@ -29,7 +35,9 @@ export class RemovePage {
     this.fdb.list("/notifications/").subscribe(__notifications => {
       this.notifications = __notifications;
     });
-   
+    for(var i = 0; i < 1000; i++){
+      this.checked[i] = 0;
+    }
   }
   alert(message: string){
     this.alertCtrl.create({
@@ -40,18 +48,41 @@ export class RemovePage {
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad RemovePage');
-    this.myfriends = this.friends;
-    for(var i = 0; i < this.friends.length; i++){
-      this.myfriends.push(this.friends[i].$value);
+    this.sub = Observable.interval(1000)
+    .subscribe((val) => { this.friendsShow(); });
+  }
+  friendsShow(){
+    if(this.fire.auth.currentUser == null){
+      this.sub.unsubscribe();
+    }
+    else{
+      for(var i = 0; i < this.friends.length; i++){
+        if(this.friends[i].$value.substring(0, this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email && this.checked[i] == 0){
+          this.toShow = this.friends[i].$value.substring(this.fire.auth.currentUser.email.length, this.friends[i].$value.length);
+          this.fr.push(this.toShow);
+          this.checked[i] = 1;
+        }
+      }
     }
   }
-  remove(){
-    this.index = -1;
+  remove(i){
+    if( i > -1){
+      this.friend = this.fr[i];
+      this.fr.splice(i, 1);
+      this.fdb.list("/friends/").remove(this.friends[i].$key);
+      this.notification = "";
+      this.notification = this.notification.concat(this.fire.auth.currentUser.email);
+      this.notification = this.notification.concat(" has removed ");
+      this.notification = this.notification.concat(this.friend);
+      this.fdb.list("/notifications").push(this.notification);
+      this.alert(this.friend + " is no longer your friend");
+      this.navCtrl.push(GeneralPage);
+    }
+    
+    /*this.index = -1;
     this.data = "";
     this.data = this.data.concat(this.fire.auth.currentUser.email);
     this.data = this.data.concat(this.friend);
-    console.log(this.friends);
-    console.log(this.data);
     for(var i = 0; i < this.friends.length; i++){
       if(this.friends[i].$value == this.data){
         this.index = i;
@@ -70,8 +101,6 @@ export class RemovePage {
       this.fdb.list("/notifications").push(this.notification);
       this.alert(this.friend + " is no longer your friend");
       this.navCtrl.push(GeneralPage);
-    }
+    }*/
   }
 }
-
-//Lista prieteni pt remove
