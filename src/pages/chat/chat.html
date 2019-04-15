@@ -35,5 +35,12 @@
       <ion-input placeholder="Message" [(ngModel)]="message"></ion-input>
     </ion-item>
     <button ion-button (click)="chatSend()">Send message</button> 
+ 
+    <button ion-button clear icon-only (click)="toggled = !toggled" [(emojiPickerIf)]="toggled" [emojiPickerDirection]="'top'"
+      (emojiPickerSelect)="handleSelection($event)">
+      🤗
+    </button>
   </ion-list>
+
+  
 </ion-content>

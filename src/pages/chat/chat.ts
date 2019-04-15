@@ -45,6 +45,9 @@ export class ChatPage {
   index;
   sub;
   subfriends;
+
+  toggled: boolean = false;
+
   constructor(public navCtrl: NavController, public navParams: NavParams, public fdb:AngularFireDatabase, public fire:AngularFireAuth,
     public alertCtrl:AlertController) {
     this.fdb.list("/chat/").subscribe(__chat => {
@@ -59,6 +62,10 @@ export class ChatPage {
     for(var i = 0; i < 1000; i++){
       this.checked[i] = 0;
     }
+  }
+
+  handleSelection(event) {
+    this.message = this.message + " " + event.char;
   }
 
   alert(message: string){
