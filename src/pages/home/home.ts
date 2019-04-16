@@ -4,6 +4,7 @@ import { RegisterPage} from '../register/register';
 import { GeneralPage } from '../general/general';
 import { ForgotPage} from '../forgot/forgot';
 import { AngularFireAuth} from 'angularfire2/auth';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 
 @Component({
@@ -15,9 +16,15 @@ import { AngularFireAuth} from 'angularfire2/auth';
 
 export class HomePage {
   username:string;
+  //user:string;
   password:string;
+  users = [];
   public unregisterBackButtonAction: any;
-  constructor(public navCtrl: NavController, private fire: AngularFireAuth, private alertCtrl: AlertController, public platform: Platform){
+  constructor(public navCtrl: NavController, private fire: AngularFireAuth, private alertCtrl: AlertController, public platform: Platform,
+    public fdb:AngularFireDatabase){
+    this.fdb.list("/users/").subscribe(__users => {
+      this.users = __users;
+    });
   }
   ionViewDidLoad() {
     this.initializeBackButtonCustomHandler();
@@ -42,21 +49,35 @@ export class HomePage {
   }
 
   login(){
-    this.fire.auth.signInWithEmailAndPassword(this.username, this.password).then(data =>{
-      if(this.fire.auth.currentUser.emailVerified == true){
-        this.alert('You have successfully logged in!')
-        this.navCtrl.push(GeneralPage);
-        console.log("Signed in with "+this.username+" and pass "+this.password);
-        
+    var email:string;
+    var found = 0;
+    for(var i = 0; i < this.users.length; i++){
+      if(this.users[i].$value.indexOf(this.username) > -1){
+        email = this.users[i].$value.substring(0, this.users[i].$value.length - this.username.length);
+        found = 1;
       }
-      else{
-        this.alert("Please verify your email");
-      }
-    })
-    .catch(error => {
+    }
+    if(found == 1) {
+      console.log(email);
+      this.fire.auth.signInWithEmailAndPassword(email, this.password).then(data =>{
+        if(this.fire.auth.currentUser.emailVerified == true){
+          this.alert('You have successfully logged in!')
+          this.navCtrl.push(GeneralPage);
+          console.log("Signed in with "+this.username+" and pass "+this.password);
+        }
+        else{
+          this.alert("Please verify your email");
+        }
+      })
+      .catch(error => {
+        console.log("Some error");
+        this.alert("Username or password are wrong");
+      });
+    }
+    else{
       console.log("Some error");
-      this.alert(error.message);
-    });
+      this.alert("Username or password are wrong");
+    }
   }
   goRegister(){
     this.navCtrl.push(RegisterPage);

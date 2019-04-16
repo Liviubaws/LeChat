@@ -26,7 +26,11 @@ export class RemovePage {
   checked = [];
   toShow:string;
   fr = [];
+  users = [];
+  helper:string;
   notification:string;
+  currentUser:string;
+  logged:boolean;
   sub;
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private fire: AngularFireAuth, public fdb: AngularFireDatabase) {
     this.fdb.list("/friends/").subscribe(__friends => {
@@ -34,6 +38,9 @@ export class RemovePage {
     });
     this.fdb.list("/notifications/").subscribe(__notifications => {
       this.notifications = __notifications;
+    });
+    this.fdb.list("/users/").subscribe(__users => {
+      this.users = __users;
     });
     for(var i = 0; i < 1000; i++){
       this.checked[i] = 0;
@@ -56,9 +63,14 @@ export class RemovePage {
       this.sub.unsubscribe();
     }
     else{
-      for(var i = 0; i < this.friends.length; i++){
-        if(this.friends[i].$value.substring(0, this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email && this.checked[i] == 0){
-          this.toShow = this.friends[i].$value.substring(this.fire.auth.currentUser.email.length, this.friends[i].$value.length);
+    for(var i = 0; i < this.users.length; i++){
+      if(this.users[i].$value.substring(0,this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email){
+        this.currentUser = this.users[i].$value.substring(this.fire.auth.currentUser.email.length, this.users[i].$value.length);
+      }
+    }
+    for(i = 0; i < this.friends.length; i++){
+        if(this.friends[i].$value.substring(0, this.currentUser.length) == this.currentUser && this.checked[i] == 0){
+          this.toShow = this.friends[i].$value.substring(this.currentUser.length, this.friends[i].$value.length);
           this.fr.push(this.toShow);
           this.checked[i] = 1;
         }
@@ -67,40 +79,33 @@ export class RemovePage {
   }
   remove(i){
     if( i > -1){
+      var index = -1;
       this.friend = this.fr[i];
-      this.fr.splice(i, 1);
-      this.fdb.list("/friends/").remove(this.friends[i].$key);
-      this.notification = "";
-      this.notification = this.notification.concat(this.fire.auth.currentUser.email);
-      this.notification = this.notification.concat(" has removed ");
-      this.notification = this.notification.concat(this.friend);
-      this.fdb.list("/notifications").push(this.notification);
-      this.alert(this.friend + " is no longer your friend");
-      this.navCtrl.push(GeneralPage);
-    }
-    
-    /*this.index = -1;
-    this.data = "";
-    this.data = this.data.concat(this.fire.auth.currentUser.email);
-    this.data = this.data.concat(this.friend);
-    for(var i = 0; i < this.friends.length; i++){
-      if(this.friends[i].$value == this.data){
-        this.index = i;
+      this.helper = "";
+      this.helper = this.helper.concat(this.currentUser);
+      this.helper = this.helper.concat(this.friend);
+      for(var j = 0; j < this.friends.length; j++){
+        if(this.friends[j].$value == this.helper){
+          index = j;
+          break;
+        }
       }
+      if(index != -1){
+        this.fr.splice(i, 1);
+        this.fdb.list("/friends/").remove(this.friends[index].$key);
+        this.notification = "";
+        this.notification = this.notification.concat(this.currentUser);
+        this.notification = this.notification.concat(" has removed ");
+        this.notification = this.notification.concat(this.friend);
+        this.fdb.list("/notifications").push(this.notification);
+        this.alert(this.friend + " is no longer your friend");
+        this.navCtrl.push(GeneralPage);
+      }
+      else{
+        this.alert("Something went wrong");
+        this.navCtrl.push(GeneralPage);
+      }
+      
     }
-    if(this.index == -1){
-      this.alert("That user is not your friend");
-      this.navCtrl.push(GeneralPage);
-    }
-    else{
-      this.fdb.list("/friends/").remove(this.friends[this.index].$key);
-      this.notification = "";
-      this.notification = this.notification.concat(this.fire.auth.currentUser.email);
-      this.notification = this.notification.concat(" has removed ");
-      this.notification = this.notification.concat(this.friend);
-      this.fdb.list("/notifications").push(this.notification);
-      this.alert(this.friend + " is no longer your friend");
-      this.navCtrl.push(GeneralPage);
-    }*/
   }
 }

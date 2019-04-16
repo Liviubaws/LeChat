@@ -7,6 +7,7 @@ import { RemovePage } from '../remove/remove';
 import { ChatPage} from '../chat/chat';
 import { ChangePassPage} from '../change-pass/change-pass';
 import { AngularFireAuth} from 'angularfire2/auth';
+import { ChangeUserPage } from '../change-user/change-user';
 
 
 /**
@@ -85,6 +86,14 @@ export class GeneralPage {
           handler: () => {
             console.log('Going to change password for '+this.fire.auth.currentUser.email);
             this.navCtrl.push(ChangePassPage);
+          }
+        },
+        {
+          text: 'Change username',
+          icon: 'construct',
+          handler: () => {
+            console.log('Going to change username for '+this.fire.auth.currentUser.email);
+            this.navCtrl.push(ChangeUserPage);
           }
         },{
           text: 'Cancel',

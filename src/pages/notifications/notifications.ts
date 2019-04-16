@@ -23,12 +23,17 @@ export class NotificationsPage {
   helper2:string;
   helper3:string;
   who:string;
+  users = [];
   sub;
   toRemove: string;
+  currentUser:string;
   constructor(public navCtrl: NavController, public navParams: NavParams, public fdb: AngularFireDatabase,
     public fire: AngularFireAuth) {
     this.fdb.list("/notifications/").subscribe(__notifications => {
       this.notifications = __notifications;
+    });
+    this.fdb.list("/users/").subscribe(__users => {
+      this.users = __users;
     });
   }
 
@@ -44,32 +49,40 @@ export class NotificationsPage {
     else{
       this.helper1 = " has added ";
       this.helper2 = " has removed ";
-      this.helper3 = " sent a message to "
+      this.helper3 = " sent a message to ";
+      for(var i = 0; i < this.users.length; i++){
+        if(this.users[i].$value.substring(0,this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email){
+          this.currentUser = this.users[i].$value.substring(this.fire.auth.currentUser.email.length, this.users[i].$value.length);
+        }
+      }
       for(var i = 0; i < this.notifications.length; i++){
-        if(this.notifications[i].$value.substring(this.notifications[i].$value.length - this.fire.auth.currentUser.email.length, this.notifications[i].$value.length) == this.fire.auth.currentUser.email){
+        if(this.notifications[i].$value.substring(this.notifications[i].$value.length - this.currentUser.length, this.notifications[i].$value.length) == this.currentUser){
           this.who = "";
           if(this.notifications[i].$value.search(this.helper1) != -1){
-            this.who = this.who.concat(this.notifications[i].$value.substr(0, this.notifications[i].$value.length - this.helper1.length - this.fire.auth.currentUser.email.length));
+            this.who = this.who.concat(this.notifications[i].$value.substr(0, this.notifications[i].$value.length - this.helper1.length - this.currentUser.length));
             this.who = this.who.concat(" added you as a friend");
             this.toshow.push(this.who);
+            this.who = "";
             this.fdb.list("/notifications").remove(this.notifications[i].$key);
             if(this.notifications[i] == null){
               break;
             }
           }
           if(this.notifications[i].$value.search(this.helper2) != -1){
-            this.who = this.who.concat(this.notifications[i].$value.substr(0, this.notifications[i].$value.length - this.helper2.length - this.fire.auth.currentUser.email.length));
+            this.who = this.who.concat(this.notifications[i].$value.substr(0, this.notifications[i].$value.length - this.helper2.length - this.currentUser.length));
             this.who = this.who.concat(" removed you as a friend");
             this.toshow.push(this.who);
+            this.who = "";
             this.fdb.list("/notifications").remove(this.notifications[i].$key);
             if(this.notifications[i] == null){
               break;
             }
           }
           if(this.notifications[i].$value.search(this.helper3) != -1){
-            this.who = this.who.concat(this.notifications[i].$value.substr(0, this.notifications[i].$value.length - this.helper3.length - this.fire.auth.currentUser.email.length));
+            this.who = this.who.concat(this.notifications[i].$value.substr(0, this.notifications[i].$value.length - this.helper3.length - this.currentUser.length));
             this.who = this.who.concat(" sent you a message");
             this.toshow.push(this.who);
+            this.who = "";
             this.fdb.list("/notifications").remove(this.notifications[i].$key);
             if(this.notifications[i] == null){
               break;

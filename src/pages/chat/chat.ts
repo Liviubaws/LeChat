@@ -45,7 +45,11 @@ export class ChatPage {
   index;
   sub;
   subfriends;
-
+  currentUser:string;
+  users = [];
+  test;
+  chk;
+  chk2;
   toggled: boolean = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fdb:AngularFireDatabase, public fire:AngularFireAuth,
@@ -59,13 +63,20 @@ export class ChatPage {
     this.fdb.list("/notifications/").subscribe(__notifications => {
       this.notifications = __notifications;
     });
+    this.fdb.list("/users/").subscribe(__users => {
+      this.users = __users;
+    });
     for(var i = 0; i < 1000; i++){
       this.checked[i] = 0;
     }
+    this.test = 0;
+    this.chk = 0;
+    this.chk2 = 0;
+    this.message = "";
   }
 
   handleSelection(event) {
-    this.message = this.message + " " + event.char;
+    this.message = this.message.concat(event.char);
   }
 
   alert(message: string){
@@ -89,9 +100,16 @@ export class ChatPage {
       this.sub.unsubscribe();
     }
     else{
-      for(var i = 0; i < this.friends.length; i++){
-        if(this.friends[i].$value.substring(0, this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email && this.checked[i] == 0){
-          this.toShow = this.friends[i].$value.substring(this.fire.auth.currentUser.email.length, this.friends[i].$value.length);
+      for(var i = 0; i < this.users.length; i++){
+        if(this.users[i].$value.substring(0,this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email && this.test == 0){
+          this.currentUser = this.users[i].$value.substring(this.fire.auth.currentUser.email.length, this.users[i].$value.length);
+          this.test = 1;
+          break;
+        }
+      }
+      for(i = 0; i < this.friends.length; i++){
+        if(this.friends[i].$value.substring(0, this.currentUser.length) == this.currentUser && this.checked[i] == 0){
+          this.toShow = this.friends[i].$value.substring(this.currentUser.length, this.friends[i].$value.length);
           this.fr.push(this.toShow);
           this.checked[i] = 1;
         }
@@ -103,53 +121,66 @@ export class ChatPage {
   }
   chatSend(){
     var errors = 0;
-    if(this.friend == this.fire.auth.currentUser.email){
+    for(var i = 0; i < this.users.length; i++){
+      if(this.users[i].$value.substring(0,this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email && this.chk == 0){
+        this.currentUser = this.users[i].$value.substring(this.fire.auth.currentUser.email.length, this.users[i].$value.length);
+        this.chk = 1;
+        break;
+      }
+    }
+    if(this.friend == this.currentUser){
       this.alert("You cannot send a message to yourself");
+      errors++;
       this.navCtrl.push(GeneralPage);
       this.stop();
     }
-    /*this.fire.auth.fetchSignInMethodsForEmail(this.friend).then(result => {
-      if(result.length == 0){
-        errors = 1;
-        this.alert("That username doesn't exist");
-        this.navCtrl.push(GeneralPage);
-        this.stop();
-      }*/
-      else{
-        if(errors == 0){
-          this.index = -1;
-          this.data = "";
-          this.mhelper = "";
-          this.showSent = "";
-          this.showSent = this.showSent.concat("Message to ");
-          this.showSent = this.showSent.concat(this.friend);
-          this.showSent = this.showSent.concat(": ");
-          this.data = this.data.concat(this.fire.auth.currentUser.email);
-          this.data = this.data.concat(this.friend);
-          this.mhelper = this.mhelper.concat(this.data);
-          for(var i = 0; i < this.friends.length; i++){
-            if(this.friends[i].$value == this.data){
-              this.index = i;
-            }
+    if(this.friend == null){
+      this.alert("Please provide an user to send the message to");
+      errors++;
+      this.navCtrl.push(GeneralPage);
+      this.stop();
+    }
+    if(this.message == ""){
+      errors++;
+      this.alert("You cannot send an empty message");
+      this.navCtrl.push(GeneralPage);
+      this.stop();
+    }
+    else{
+      if(errors == 0){
+        this.index = -1;
+        this.data = "";
+        this.mhelper = "";
+        this.showSent = "";
+        this.showSent = this.showSent.concat("Message to ");
+        this.showSent = this.showSent.concat(this.friend);
+        this.showSent = this.showSent.concat(": ");
+        this.data = this.data.concat(this.currentUser);
+        this.data = this.data.concat(this.friend);
+        this.mhelper = this.mhelper.concat(this.data);
+        for(i = 0; i < this.friends.length; i++){
+          if(this.friends[i].$value == this.data){
+            this.index = i;
           }
-          if(this.index > -1){
-            this.mhelper = this.message.concat(this.mhelper);
-            this.showSent = this.showSent.concat(this.message);
-            this.notification = "";
-            this.notification = this.notification.concat(this.fire.auth.currentUser.email);
-            this.notification = this.notification.concat(" sent a message to ");
-            this.notification = this.notification.concat(this.friend);
-            this.sentmsj.push(this.showSent);
-            this.fdb.list("/notifications").push(this.notification);
-            this.fdb.list("/chat/").push(this.mhelper);
-          }
-          else{
-            this.alert("You are not friend with "+this.friend);
-            this.navCtrl.push(GeneralPage);
-            this.stop();
-          } 
         }
+        if(this.index > -1){
+          this.mhelper = this.message.concat(this.mhelper);
+          this.showSent = this.showSent.concat(this.message);
+          this.notification = "";
+          this.notification = this.notification.concat(this.currentUser);
+          this.notification = this.notification.concat(" sent a message to ");
+          this.notification = this.notification.concat(this.friend);
+          this.sentmsj.push(this.showSent);
+          this.fdb.list("/notifications").push(this.notification);
+          this.fdb.list("/chat/").push(this.mhelper);
+        }
+        else{
+          this.alert("That user is not your friend");
+          this.navCtrl.push(GeneralPage);
+          this.stop();
+        } 
       }
+    }
   }
 
   stop(){
@@ -164,27 +195,35 @@ export class ChatPage {
      this.sub.unsubscribe();
    }
    else{
-      for(var i = 0; i < this.friends.length; i++){
-        for(var j = 0; j < this.chats.length; j++){
-          this.checker = this.friends[i].$value;
-          this.recvm = this.chats[j].$value;
-          this.recvmCopy = this.recvm;
-          this.recvmCpy = this.recvm;
-          this.helper = this.fire.auth.currentUser.email;
-          this.friendCheck = this.friends[i].$value.substr(this.helper.length);
-          if(this.helper== this.checker.substring(0, this.helper.length) && this.recvm.substring(this.recvm.length - this.helper.length, this.recvm.length) == this.helper &&
-          this.recvmCpy.substring(this.recvm.length - this.helper.length - this.friendCheck.length, this.recvm.length - this.helper.length) == this.friendCheck){
-            this.recvmCopy = this.recvmCopy.substring(0, this.recvmCopy.length - this.friendCheck.length - this.helper.length);
-            this.toShow = "";
-            this.toShow = this.toShow.concat("Message from ");
-            this.toShow = this.toShow.concat(this.friendCheck);
-            this.toShow = this.toShow.concat(": ")
-            this.toShow = this.toShow.concat(this.recvmCopy);
-            this.mymsj.push(this.toShow);
-            this.fdb.list("/chat").remove(this.chats[j].$value.$key);
-          }
+    for(var i = 0; i < this.users.length; i++){
+      if(this.users[i].$value.substring(0,this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email && this.chk2 == 0){
+        this.currentUser = this.users[i].$value.substring(this.fire.auth.currentUser.email.length, this.users[i].$value.length);
+        this.chk2 = 1;
+        break;
+      }
+    }
+    for(i = 0; i < this.friends.length; i++){
+      for(var j = 0; j < this.chats.length; j++){
+        this.checker = this.friends[i].$value;
+        this.recvm = this.chats[j].$value;
+        this.recvmCopy = this.recvm;
+        this.recvmCpy = this.recvm;
+        this.helper = this.currentUser;
+        this.friendCheck = this.friends[i].$value.substring(this.helper.length, this.friends[i].$value.length);
+        if(this.helper== this.checker.substring(0, this.helper.length) && this.recvm.substring(this.recvm.length - this.helper.length, this.recvm.length) == this.helper &&
+        this.recvmCpy.substring(this.recvm.length - this.helper.length - this.friendCheck.length, this.recvm.length - this.helper.length) == this.friendCheck){
+          this.recvmCopy = this.recvmCopy.substring(0, this.recvmCopy.length - this.friendCheck.length - this.helper.length);
+          this.toShow = "";
+          this.toShow = this.toShow.concat("Message from ");
+          this.toShow = this.toShow.concat(this.friendCheck);
+          this.toShow = this.toShow.concat(": ")
+          this.toShow = this.toShow.concat(this.recvmCopy);
+          this.mymsj.push(this.toShow);
+          console.log(this.toShow);
+          this.fdb.list("/chat").remove(this.chats[j].$key);
         }
       }
+    }
     }
   }
 }

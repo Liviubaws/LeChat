@@ -16,6 +16,7 @@ import { ChatPage} from '../pages/chat/chat';
 import { ForgotPage } from '../pages/forgot/forgot';
 import { NotificationsPage} from '../pages/notifications/notifications';
 import { ChangePassPage} from '../pages/change-pass/change-pass';
+import { ChangeUserPage} from '../pages/change-user/change-user';
 import { FIREBASE_CONFIG } from './environment';
 import { AngularFireModule} from 'angularfire2';
 import { AngularFireAuthModule} from 'angularfire2/auth';
@@ -32,6 +33,7 @@ import { AngularFireDatabaseModule} from 'angularfire2/database';
     ChatPage,
     NotificationsPage,
     ChangePassPage,
+    ChangeUserPage,
     ForgotPage
   ],
   imports: [
@@ -53,6 +55,7 @@ import { AngularFireDatabaseModule} from 'angularfire2/database';
     ChatPage,
     NotificationsPage,
     ChangePassPage,
+    ChangeUserPage,
     ForgotPage
   ],
   providers: [
