@@ -22,6 +22,7 @@ export class RegisterPage {
   password:string;
   repass:string;
   data:string;
+  logged;
   users = [];
   constructor(public navCtrl: NavController, public navParams: NavParams,private fire: AngularFireAuth, private alertCtrl: AlertController,
     public fdb: AngularFireDatabase) {
@@ -66,12 +67,12 @@ export class RegisterPage {
       this.alert("Passwords are different");
     }
     for(var i = 0; i < this.users.length; i++){
-      if(this.username == this.users[i].$value.substring(0, this.user.length)){
+      if(this.username == this.users[i].$value.substring(0, this.username.length)){
         errors++;
         this.alert("That email address is already in use");
         break;
       }
-      if(this.user == this.users[i].$value.substring(this.username.length, this.user.length)){
+      if(this.user == this.users[i].$value.substring(this.users[i].$value.length - this.user.length, this.users[i].$value.length)){
         errors++;
         this.alert("That username is already in use");
         break;

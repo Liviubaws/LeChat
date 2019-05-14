@@ -19,6 +19,10 @@ import { GeneralPage } from '../general/general';
 })
 export class ChangeUserPage {
 newuser:string;
+greeted:string;
+user:string;
+replace:string;
+friends = [];
 users = [];
 currentUser: string;
   constructor(public navCtrl: NavController, public navParams: NavParams, public fdb:AngularFireDatabase, public fire:AngularFireAuth,
@@ -43,12 +47,37 @@ currentUser: string;
       this.navCtrl.push(GeneralPage);
     }
     else{
+      this.greeted = this.fire.auth.currentUser.email;
+      for(var i = 0; i < this.users.length; i++){
+        if(this.users[i].$value.substring(0, this.greeted.length) == this.greeted){
+          this.user = this.users[i].$value.substring(this.greeted.length);
+          break;
+        }
+      }
       var index = -1;
       for(var i = 0; i < this.users.length; i++){
         if(this.users[i].$value.substring(0,this.fire.auth.currentUser.email.length) == this.fire.auth.currentUser.email){
           this.currentUser = this.users[i].$value.substring(this.fire.auth.currentUser.email.length, this.users[i].$value.length);
           index = i;
           break;
+        }
+      }
+      for(var i = 0; i < this.friends.length; i++){
+        if(this.user == this.friends[i].$value.substring(0, this.users.length)){
+          this.replace = "";
+          this.replace = this.replace.concat(this.newuser);
+          this.replace = this.replace.concat(this.friends[i].$value.substring(this.friends[i].$value.length - this.user.length, this.friends[i].$value.length));
+          
+          this.fdb.list("/friends/").remove(this.friends[i].$key);
+          this.fdb.list("/friends/").push(this.replace);
+        }
+        if(this.user == this.friends[i].$value(this.friends[i].$value.length - this.user.length, this.friends[i].$value.length)){
+          this.replace = "";
+          this.replace = this.replace.concat(this.friends[i].$value.substring(0, this.friends[i].$value.length - this.user.length));
+          this.replace = this.replace.concat(this.newuser);
+          
+          this.fdb.list("/friends/").remove(this.friends[i].$key);
+          this.fdb.list("/friends/").push(this.replace);
         }
       }
       var data:string;

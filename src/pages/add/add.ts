@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, SelectPopover } from 'ionic-angular';
+import { NavController, NavParams, AlertController} from 'ionic-angular';
 import { GeneralPage } from '../general/general';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';

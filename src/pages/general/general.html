@@ -10,7 +10,11 @@
 </ion-header>
 
 <ion-content padding>
-    <ion-title>Welcome to Le Chat</ion-title>
+    <ion-title>Welcome to Le Chat, {{user}}</ion-title>
+    Your current status is {{currentStatus}}
+        <ion-input placeholder="What's your current mood?" [(ngModel)]="status"></ion-input>
+        <button id="stat" ion-button color="primary" (click)="saveStatus()">Change status</button>
+    <!--<button id="profile" ion-button color="light" (click)="profile()">Edit Profile</button>-->
     <button id="friends" ion-button color="secondary" (click)="addFriend()">Manage Friends</button>
     <button id="notifications" ion-button color="danger" (click)="notifications()">Notifications</button>
     <button id="chat" ion-button color="primary" (click)="chat()">Start chatting</button>

@@ -5,7 +5,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { EmojiPickerModule} from '@ionic-tools/emoji-picker';
 
-
 import { LeChat } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { RegisterPage } from '../pages/register/register';
@@ -17,6 +16,7 @@ import { ForgotPage } from '../pages/forgot/forgot';
 import { NotificationsPage} from '../pages/notifications/notifications';
 import { ChangePassPage} from '../pages/change-pass/change-pass';
 import { ChangeUserPage} from '../pages/change-user/change-user';
+
 import { FIREBASE_CONFIG } from './environment';
 import { AngularFireModule} from 'angularfire2';
 import { AngularFireAuthModule} from 'angularfire2/auth';
