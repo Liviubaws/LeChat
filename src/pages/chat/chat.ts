@@ -51,6 +51,8 @@ export class ChatPage {
   chk;
   chk2;
   toggled: boolean = false;
+  statuses = [];
+  frarr = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public fdb:AngularFireDatabase, public fire:AngularFireAuth,
     public alertCtrl:AlertController) {
@@ -65,6 +67,9 @@ export class ChatPage {
     });
     this.fdb.list("/users/").subscribe(__users => {
       this.users = __users;
+    });
+    this.fdb.list("/statuses/").subscribe(__statuses => {
+      this.statuses = __statuses;
     });
     for(var i = 0; i < 1000; i++){
       this.checked[i] = 0;
@@ -110,6 +115,13 @@ export class ChatPage {
       for(i = 0; i < this.friends.length; i++){
         if(this.friends[i].$value.substring(0, this.currentUser.length) == this.currentUser && this.checked[i] == 0){
           this.toShow = this.friends[i].$value.substring(this.currentUser.length, this.friends[i].$value.length);
+          this.frarr.push(this.toShow);
+          for(var j = 0; j < this.statuses.length; j++){
+            if(this.toShow == this.statuses[j].$value.substring(0, this.toShow.length)){
+              this.toShow = this.toShow.concat(" --- ");
+              this.toShow = this.toShow.concat(this.statuses[j].$value.substring(this.toShow.length - 5, this.statuses[j].$value.length));
+            }
+          }
           this.fr.push(this.toShow);
           this.checked[i] = 1;
         }
@@ -117,7 +129,7 @@ export class ChatPage {
     }
   }
   choose(i){
-    this.friend = this.fr[i];
+      this.friend = this.frarr[i];
   }
   chatSend(){
     var errors = 0;

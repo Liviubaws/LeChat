@@ -34,13 +34,14 @@ export class GeneralPage {
   friends = [];
   profiles = [];
   statuses = [];
+  notifs = [];
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public actionSheetCtrl: ActionSheetController, private alertCtrl: AlertController, private fire: AngularFireAuth, private fdb: AngularFireDatabase) {
     this.fdb.list("/users/").subscribe(__users => {
       this.users = __users;
     });
-    this.fdb.list("/friends/").subscribe(__users => {
-      this.users = __users;
+    this.fdb.list("/friends/").subscribe(__friends => {
+      this.friends = __friends;
     });
     this.fdb.list("/profiles/").subscribe(__profiles => {
       this.profiles = __profiles;
@@ -48,6 +49,18 @@ export class GeneralPage {
     this.fdb.list("/statuses/").subscribe(__statuses => {
       this.statuses = __statuses;
     });
+    this.fdb.list("/notifications/").subscribe(__notifs => {
+      this.notifs = __notifs;
+    });
+    this.user = "";
+    this.currentStatus = "not set";
+    this.greeted = this.fire.auth.currentUser.email;
+    for(var i = 0; i < this.users.length; i++){
+      if(this.users[i].$value.substring(0, this.greeted.length) == this.greeted){
+        this.user = this.users[i].$value.substring(this.greeted.length);
+        break;
+      }
+    }
   }
   alert(message: string){
     this.alertCtrl.create({
@@ -58,23 +71,6 @@ export class GeneralPage {
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad GeneralPage');
-    this.greeted = this.fire.auth.currentUser.email;
-    for(var i = 0; i < this.users.length; i++){
-      if(this.users[i].$value.substring(0, this.greeted.length) == this.greeted){
-        this.user = this.users[i].$value.substring(this.greeted.length);
-        break;
-      }
-    }
-    this.currentStatus = "";
-    for(var i = 0; i < this.statuses.length; i++){
-      if(this.statuses[i].$value.substring(0, this.user.length) == this.user){
-        this.currentStatus = this.statuses[i].$value.substring(this.user.length, this.statuses[i].$value.length);
-        break;
-      }
-    }
-    if(this.currentStatus == ""){
-      this.currentStatus = "not set";
-    }
   }
   addFriend() {
     const actionSheet = this.actionSheetCtrl.create({
@@ -113,23 +109,7 @@ export class GeneralPage {
           text: 'Delete account',
           icon: 'close-circle',
           handler: () => {
-            this.alert(this.fire.auth.currentUser.email+ " has been deleted");
-            console.log('Deleted account '+this.fire.auth.currentUser.email);
-            this.fire.auth.currentUser.delete();
-            for(var i = 0; i < this.users.length; i++){
-              if(this.user == this.users[i].$value.substring(this.users[i].$value.length - this.user.length, this.users[i].$value.length)){
-                this.fdb.list("/users/").remove(this.users[i].$key);
-              }
-            }
-            for(var i = 0; i < this.friends.length; i++){
-              if(this.user == this.friends[i].$value.substring(0, this.users.length)){
-                this.fdb.list("/friends/").remove(this.friends[i].$key);
-              }
-              if(this.user == this.friends[i].$value(this.friends[i].$value.length - this.user.length, this.friends[i].$value.length)){
-                this.fdb.list("/friends/").remove(this.friends[i].$key);
-              }
-            }
-            this.navCtrl.push(HomePage);
+            this.delAcc();
           }
         },
         {
@@ -158,6 +138,43 @@ export class GeneralPage {
     });
     actionSheet.present();
   }
+  delAcc(){
+            for(var i = 0; i < this.users.length; i++){
+              if(this.user == this.users[i].$value.substring(this.users[i].$value.length - this.user.length, this.users[i].$value.length)){
+                this.fdb.list("/users/").remove(this.users[i].$key);
+              }
+            }
+            for(var i = 0; i < this.friends.length; i++){
+              if(this.user == this.friends[i].$value.substring(0, this.user.length)){
+                this.fdb.list("/friends/").remove(this.friends[i].$key);
+                i = 0;
+              }
+              if(this.user == this.friends[i].$value.substring(this.friends[i].$value.length - this.user.length, this.friends[i].$value.length)){
+                this.fdb.list("/friends/").remove(this.friends[i].$key);
+                i = 0;
+              }
+            }
+            for(var i = 0; i < this.statuses.length; i++){
+              if(this.statuses[i].$value.substring(0, this.user.length) == this.user){
+                this.fdb.list("/statuses/").remove(this.statuses[i].$key);
+                break;
+              }
+            }
+            for(var i = 0; i < this.notifs.length; i++){
+              if(this.notifs[i].$value.substring(0, this.user.length) == this.user){
+                this.fdb.list("/notifications/").remove(this.notifs[i].$key);
+                i = 0;
+              }
+              if(this.notifs[i].$value.substring(this.notifs[i].$value.length - this.user.length, this.notifs[i].$value.length) == this.user){
+                this.fdb.list("/notifications/").remove(this.notifs[i].$key);
+                i = 0;
+              }
+            }
+            this.alert(this.fire.auth.currentUser.email+ " has been deleted");
+            console.log('Deleted account '+this.fire.auth.currentUser.email);
+            this.fire.auth.currentUser.delete();
+            this.navCtrl.push(HomePage);
+  }
   chat() {
     this.navCtrl.push(ChatPage);
   }
@@ -177,9 +194,9 @@ export class GeneralPage {
       }
     }
     this.submitStatus = "";
-    this.submitStatus = this.submitStatus.concat(this.user);
+    this.submitStatus = this.user;
     this.submitStatus = this.submitStatus.concat(this.status);
+    this.currentStatus = this.status;
     this.fdb.list("/statuses/").push(this.submitStatus);
-    this.navCtrl.setRoot(this.navCtrl.getActive().component);
   }
 }

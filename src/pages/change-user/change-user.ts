@@ -3,7 +3,6 @@ import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angu
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { HomePage } from '../home/home';
-import { GeneralPage } from '../general/general';
 
 /**
  * Generated class for the ChangeUserPage page.
@@ -25,10 +24,21 @@ replace:string;
 friends = [];
 users = [];
 currentUser: string;
+notifs = [];
+statuses = [];
   constructor(public navCtrl: NavController, public navParams: NavParams, public fdb:AngularFireDatabase, public fire:AngularFireAuth,
     public alertCtrl: AlertController,) {
     this.fdb.list("/users/").subscribe(__users => {
       this.users = __users;
+    });
+    this.fdb.list("/friends/").subscribe(__friends => {
+      this.friends = __friends;
+    });
+    this.fdb.list("/notifications/").subscribe(__notifs => {
+      this.notifs = __notifs;
+    });
+    this.fdb.list("/statuses/").subscribe(__statuses => {
+      this.statuses = __statuses;
     });
   }
   alert(message: string){
@@ -41,7 +51,7 @@ currentUser: string;
   ionViewDidLoad() {
     console.log('ionViewDidLoad ChangeUserPage');
   }
-  changeUser(){
+  /*changeUser(){
     if(this.newuser.length < 7){
       this.alert("Username too short. Need at least 8 characters");
       this.navCtrl.push(GeneralPage);
@@ -70,14 +80,46 @@ currentUser: string;
           
           this.fdb.list("/friends/").remove(this.friends[i].$key);
           this.fdb.list("/friends/").push(this.replace);
+          i = 0;
         }
-        if(this.user == this.friends[i].$value(this.friends[i].$value.length - this.user.length, this.friends[i].$value.length)){
+        if(this.user == this.friends[i].$value.substring(this.friends[i].$value.length - this.user.length, this.friends[i].$value.length)){
           this.replace = "";
           this.replace = this.replace.concat(this.friends[i].$value.substring(0, this.friends[i].$value.length - this.user.length));
           this.replace = this.replace.concat(this.newuser);
           
           this.fdb.list("/friends/").remove(this.friends[i].$key);
           this.fdb.list("/friends/").push(this.replace);
+          i = 0;
+        }
+        for(var i = 0; i < this.notifs.length; i++){
+          if(this.user == this.notifs[i].$value.substring(0, this.user.length)){
+            this.replace = "";
+            this.replace = this.replace.concat(this.newuser);
+            this.replace = this.replace.concat(this.notifs[i].$value.substring(this.notifs[i].$value.length - this.user.length, this.notifs[i].$value.length));
+
+            this.fdb.list("/notifications/").remove(this.notifs[i].$key);
+            this.fdb.list("/notifications/").push(this.replace);
+            i = 0;
+          }
+          if(this.user == this.notifs[i].$value.substring(this.notifs[i].$value.length - this.user.length, this.notifs[i].$value.length)){
+            this.replace = "";
+            this.replace = this.replace.concat(this.notifs[i].$value.substring(0, this.notifs[i].$value.length - this.user.length));
+            this.replace = this.replace.concat(this.newuser);
+
+            this.fdb.list("/notifications/").remove(this.notifs[i].$key);
+            this.fdb.list("/notifications/").push(this.replace);
+            i = 0;
+          }
+        }
+        for(var i = 0; i < this.statuses.length; i++){
+          if(this.user == this.statuses[i].$value.substring(0, this.user.length)){
+            this.replace = "";
+            this.replace = this.replace.concat(this.newuser);
+            this.replace = this.replace.concat(this.statuses[i].$value.substring(this.statuses[i].$value.length - this.user.length, this.statuses[i].$value.length));
+
+            this.fdb.list("/statuses/").remove(this.statuses[i].$key);
+            this.fdb.list("/statuses/").push(this.replace);
+          }
         }
       }
       var data:string;
@@ -96,5 +138,82 @@ currentUser: string;
         this.navCtrl.push(GeneralPage);
       }
     }
+  }*/
+  changeUser(){
+    this.user = "";
+    this.greeted = this.fire.auth.currentUser.email;
+    for(var i = 0; i < this.users.length; i++){
+      if(this.users[i].$value.substring(0, this.greeted.length) == this.greeted){
+        this.user = this.users[i].$value.substring(this.greeted.length);
+        break;
+      }
+    }
+    for(var i = 0; i < this.users.length; i++){
+      if(this.user == this.users[i].$value.substring(this.users[i].$value.length - this.user.length, this.users[i].$value.length)){
+        this.replace = "";
+        this.replace = this.replace.concat(this.fire.auth.currentUser.email);
+        this.replace = this.replace.concat(this.newuser);
+        this.fdb.list("/users/").remove(this.users[i].$key);
+        this.fdb.list("/users").push(this.replace);
+      }
+    }
+    var repeat = 0;
+    for(var i = 0; i < this.friends.length; i++){
+      if(repeat == 1){
+        i = 0;
+        repeat = 0;
+      }
+      if(this.user == this.friends[i].$value.substring(0, this.user.length)){
+        this.replace = "";
+        this.replace = this.replace.concat(this.newuser);
+        this.replace = this.replace.concat(this.friends[i].$value.substring(this.user.length, this.friends[i].$value.length));
+        this.fdb.list("/friends/").remove(this.friends[i].$key);
+        this.fdb.list("/friends/").push(this.replace);
+        repeat = 1;
+      }
+      if(this.user == this.friends[i].$value.substring(this.friends[i].$value.length - this.user.length, this.friends[i].$value.length)){
+        this.replace = "";
+        this.replace = this.replace.concat(this.friends[i].$value.substring(0, this.friends[i].$value.length - this.user.length));
+        this.replace = this.replace.concat(this.newuser);
+        this.fdb.list("/friends/").remove(this.friends[i].$key);
+        this.fdb.list("/friends/").push(this.replace);
+        repeat = 1;
+      }
+    }
+    for(var i = 0; i < this.statuses.length; i++){
+      if(this.statuses[i].$value.substring(0, this.user.length) == this.user){
+        this.replace = "";
+        this.replace = this.replace.concat(this.newuser);
+        this.replace = this.replace.concat(this.statuses[i].$value.substring(this.user.length, this.statuses[i].$value.length));
+        this.fdb.list("/statuses/").remove(this.statuses[i].$key);
+        this.fdb.list("/statuses/").push(this.replace);
+        break;
+      }
+    }
+    var nervi = 0;
+    for(var i = 0; i < this.notifs.length; i++){
+      if(nervi == 1){
+        i = 0;
+        nervi = 0;
+      }
+      if(this.notifs[i].$value.substring(0, this.user.length) == this.user){
+        this.replace = "";
+        this.replace = this.replace.concat(this.newuser);
+        this.replace = this.replace.concat(this.notifs[i].$value.substring(this.user.length, this.notifs[i].$value.length));
+        this.fdb.list("/notifications/").remove(this.notifs[i].$key);
+        this.fdb.list("/notifications/").push(this.replace);
+        nervi = 1;
+      }
+      if(this.notifs[i].$value.substring(this.notifs[i].$value.length - this.user.length, this.notifs[i].$value.length) == this.user){
+        this.replace = "";
+        this.replace = this.replace.concat(this.notifs[i].$value.substring(0, this.notifs[i].$value.length - this.user.length));
+        this.replace = this.replace.concat(this.newuser);
+        this.fdb.list("/notifications/").remove(this.notifs[i].$key);
+        this.fdb.list("/notifications/").push(this.replace);
+        nervi = 1;
+      }
+    }
+    this.alert("Account name changed successfully");
+    this.navCtrl.push(HomePage);
   }
 }
