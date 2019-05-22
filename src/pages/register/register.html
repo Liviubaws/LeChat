@@ -11,7 +11,7 @@
 
 <ion-content padding center text-center>
     <ion-title>Register</ion-title>
-  <ion-list>
+  <ion-list class="list">
     <ion-item>
       <ion-input placeholder="Email" [(ngModel)]="username"></ion-input>
     </ion-item>
@@ -22,7 +22,7 @@
       <ion-input placeholder="Password" [(ngModel)]="password" type="password"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-input placeholder="Repeat password" [(ngModel)]="repass" type="password"></ion-input>
+      <ion-input placeholder="Confirm password" [(ngModel)]="repass" type="password"></ion-input>
     </ion-item>
   </ion-list>
   <button ion-button (click)="register()">Register</button>

@@ -6,15 +6,17 @@
 -->
 <ion-header>
     <ion-navbar>
-      
+
     </ion-navbar>
   </ion-header>
 <ion-content padding center text-center>
   <ion-title>Forgot Password</ion-title>
   <ion-list>
-    <ion-item>
+    <ion-item id="input_css">
       <ion-input placeholder="Enter your email" [(ngModel)]="username"></ion-input>
     </ion-item>
   </ion-list>
-  <button ion-button (click)="getPassword()">Get password</button>
+  <ion-row class="button_list">
+    <button ion-button (click)="getPassword()" id="button_css">Get password</button>
+  </ion-row>
 </ion-content>

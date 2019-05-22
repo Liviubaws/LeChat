@@ -6,41 +6,39 @@
 -->
 <ion-header>
   <ion-navbar (click)="stop()">
+    <ion-title>Chat</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <ion-title>Chat</ion-title>
-  
   <ion-list>
     <ion-item *ngFor="let sentmsjs of sentmsj">
-        <ion-label text-wrap>
-      {{sentmsjs}}
-        </ion-label>
-    </ion-item>
-    <ion-item *ngFor="let mymsjs of mymsj">
-        <ion-label text-wrap>
-      {{mymsjs}}
+      <ion-label text-wrap>
+        {{sentmsjs}}
       </ion-label>
     </ion-item>
-  </ion-list> 
-  <ion-list>
-      <ion-item *ngFor = "let f of fr; let i = index" (click)="choose(i)">
-          {{f}}
+    <ion-item *ngFor="let mymsjs of mymsj">
+      <ion-label text-wrap>
+        {{mymsjs}}
+      </ion-label>
     </ion-item>
-    <ion-item>
-        <ion-input placeholder="Friend's email" [(ngModel)]="friend"></ion-input>
-      </ion-item>
-    <ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-item *ngFor="let f of fr; let i = index" (click)="choose(i)" id="friends">
+      {{f}}
+    </ion-item>
+    <ion-item id="friends">
+      <ion-input placeholder="Friend's email" [(ngModel)]="friend"></ion-input>
+    </ion-item>
+    <ion-item id="message">
       <ion-input placeholder="Message" [(ngModel)]="message"></ion-input>
     </ion-item>
-    <button ion-button (click)="chatSend()">Send message</button> 
-    <button ion-button clear icon-only (click)="toggled = !toggled" [(emojiPickerIf)]="toggled" [emojiPickerDirection]="'top'"
-      (emojiPickerSelect)="handleSelection($event)">
+  </ion-list>
+  <ion-row class="row_css">
+    <button ion-button clear icon-only (click)="toggled = !toggled" [(emojiPickerIf)]="toggled" [emojiPickerDirection]="'top'" (emojiPickerSelect)="handleSelection($event)" style="zoom:1.5;">
       🤗
     </button>
-    
-  </ion-list>
+    <ion-icon name="send" (click)="chatSend()" style="zoom:2.0;" class="send"></ion-icon>
+  </ion-row>
 
-  
 </ion-content>

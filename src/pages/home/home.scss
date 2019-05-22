@@ -1,5 +1,49 @@
 page-home {
-    ion-title *{
-        margin-top: 25vh;
-    }
+  ion-title * {
+    margin-top: 25vh;
+  }
+
+  #input_css {
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #login_css {
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .label_forgot:hover{
+    color: blue;
+  }
+  .label_forgot{
+    color: grey;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: right;
+    font-size: 13px;
+  }
+  .label_register:hover{
+    color: blue;
+  }
+  .label_register{
+    width: 185px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+    text-align: left;
+  }
+  .label_normal {
+    width: 115px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: right;
+    font-size: 13px;
+  }
+  #row_css{
+    width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

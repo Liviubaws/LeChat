@@ -1,5 +1,21 @@
 page-chat {
-    ion-title *{
-        margin-bottom: 5vh;
+    .send{
+
+    }
+    .send:hover {
+      color: grey;
+    }
+    #message {
+      width: 500px;
+    }
+    #friends {
+      width: 250px;
+    }
+    .row_css{
+      width: 350px;
+      //align: right;
+      margin-left: auto;
+      margin-right: auto;
+
     }
 }
